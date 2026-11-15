@@ -124,7 +124,12 @@ public class MainActivity extends Activity {
                 String msg = e.getMessage();
                 runOnUiThread(() -> status.setText("Export failed: " + (msg == null ? e.getClass().getSimpleName() : msg)));
             } finally {
-                retriever.release(); working = false;
+                try {
+                    retriever.release();
+                } catch (IOException e) {
+                    android.util.Log.e("DroneFrames", "Failed to release video retriever", e);
+                }
+                working = false;
                 runOnUiThread(() -> { select.setEnabled(true); export.setEnabled(videoUri != null); cancel.setEnabled(false); });
             }
         }).start();
